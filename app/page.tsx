@@ -32,7 +32,7 @@ export default function Home() {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: MouseEvent) {
       if (modalRef.current && !modalRef.current.contains(event.target)) setShowResult(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
