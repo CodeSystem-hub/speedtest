@@ -29,11 +29,11 @@ export default function Home() {
   const [currentTest, setCurrentTest] = useState("");
   const [progress, setProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) setShowResult(false);
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) setShowResult(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
