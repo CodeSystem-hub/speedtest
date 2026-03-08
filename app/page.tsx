@@ -59,24 +59,41 @@ export default function Home() {
   }
 
   async function testDownload() {
-    setCurrentTest("Download");
-    const size = 50_000_000;
-    const response = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`, { cache: "no-store" });
-    const reader = response.body.getReader();
-    const start = performance.now();
-    let received = 0;
+  setCurrentTest("Download");
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      received += value.length;
-      setProgress((received / size) * 100);
-    }
+  const size = 50_000_000;
 
-    const duration = (performance.now() - start) / 1000;
-    setDownload(parseFloat(((received * 8) / duration / 1_000_000).toFixed(2)));
+  const response = await fetch(
+    `https://speed.cloudflare.com/__down?bytes=${size}`,
+    { cache: "no-store" }
+  );
+
+  if (!response.body) {
+    throw new Error("Response body is null");
   }
 
+  const reader = response.body.getReader();
+
+  const start = performance.now();
+
+  let received = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) break;
+
+    received += value.length;
+
+    setProgress((received / size) * 100);
+  }
+
+  const duration = (performance.now() - start) / 1000;
+
+  setDownload(
+    parseFloat(((received * 8) / duration / 1_000_000).toFixed(2))
+  );
+}
   async function testUpload() {
     setCurrentTest("Upload");
     const size = 20_000_000;
