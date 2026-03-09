@@ -104,6 +104,8 @@ export default function Home() {
   async function startTest() {
     setLoading(true);
     setProgress(0);
+    setDownload(0);
+    setUpload(0);
     await getIPInfo();
     await testPing();
     await testDownload();
@@ -123,7 +125,7 @@ export default function Home() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: isMobile ? "20px 10px" : "40px",
+        padding: isMobile ? "10px" : "40px",
         overflowX: "hidden"
       }}
     >
@@ -135,20 +137,20 @@ export default function Home() {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          gap: isMobile ? "15px" : "30px",
+          gap: isMobile ? "10px" : "30px",
           textAlign: "center"
         }}
       >
         {/* HEADER */}
         <div>
           <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center" }}>
-            <Zap size={isMobile ? 22 : 32} color={COLORS.primary} />
-            <h1 style={{ fontSize: isMobile ? "1.4rem" : "2.5rem", fontWeight: 800, margin: 0 }}>
+            <Zap size={isMobile ? 20 : 32} color={COLORS.primary} />
+            <h1 style={{ fontSize: isMobile ? "1.3rem" : "2.5rem", fontWeight: 800, margin: 0 }}>
               Speed<span style={{ color: COLORS.primary }}>Test</span> Pro
             </h1>
           </div>
-          <p style={{ color: COLORS.light, fontSize: isMobile ? "10px" : "13px", opacity: 0.7 }}>
-            Conexão Cloudflare Network
+          <p style={{ color: COLORS.light, fontSize: isMobile ? "9px" : "13px", opacity: 0.7 }}>
+            Performance em Tempo Real
           </p>
         </div>
 
@@ -159,30 +161,53 @@ export default function Home() {
           gap: isMobile ? "5px" : "15px",
         }}>
           {[
-            { label: "Down", val: download, icon: Download, color: COLORS.primary },
-            { label: "Up", val: upload, icon: Upload, color: COLORS.accent },
-            { label: "Ping", val: ping, icon: Clock, color: COLORS.light, unit: "ms" }
+            { label: "Down", val: download, icon: Download, color: COLORS.primary, max: 500 },
+            { label: "Up", val: upload, icon: Upload, color: COLORS.accent, max: 500 },
+            { label: "Ping", val: ping, icon: Clock, color: COLORS.light, unit: "ms", max: 200 }
           ].map((item, idx) => (
             <div key={idx} style={{
               background: "rgba(255,255,255,0.03)",
-              borderRadius: "15px",
-              padding: isMobile ? "8px 2px" : "20px",
-              border: `1px solid ${item.color}15`
+              borderRadius: "12px",
+              padding: isMobile ? "12px 2px" : "20px",
+              border: `1px solid ${item.color}10`,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
             }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", fontSize: isMobile ? "9px" : "13px", marginBottom: "4px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "3px", fontSize: isMobile ? "8px" : "13px", marginBottom: "4px" }}>
                 <item.icon size={isMobile ? 10 : 16} color={item.color} />
-                <span>{item.label}</span>
+                <span style={{ fontWeight: 600 }}>{item.label}</span>
               </div>
+              
               <GaugeComponent
                 value={item.val}
-                maxValue={idx === 2 ? 200 : 500}
+                maxValue={item.max}
                 type="semicircle"
-                labels={{ visible: false }}
-                arc={{ width: 0.15, padding: 0.02, subArcs: [{ limit: 50, color: COLORS.dark }, { limit: 150, color: COLORS.accent }, { color: COLORS.primary }] }}
-                pointer={{ type: "blob", color: COLORS.white, width: 2 }}
+                labels={{
+                  visible: false, // Esconde os labels de escala
+                  valueLabel: { hide: true } // REMOVE O NÚMERO JUNTO AO PONTEIRO
+                }}
+                arc={{
+                  width: 0.12,
+                  padding: 0.02,
+                  subArcs: [
+                    { limit: item.max * 0.2, color: COLORS.dark },
+                    { limit: item.max * 0.6, color: COLORS.accent },
+                    { color: COLORS.primary }
+                  ],
+                  nbTick: 8
+                }}
+                pointer={{
+                  type: "needle",
+                  color: COLORS.white,
+                  length: 0.75,
+                  width: isMobile ? 2 : 4,
+                  elastic: true
+                }}
               />
-              <div style={{ fontSize: isMobile ? "12px" : "20px", fontWeight: 800, color: item.color, marginTop: "5px" }}>
-                {item.val}<span style={{ fontSize: "0.6em", marginLeft: "2px" }}>{item.unit || "Mb"}</span>
+              
+              <div style={{ fontSize: isMobile ? "12px" : "22px", fontWeight: 800, color: item.color, marginTop: "2px" }}>
+                {item.val}<span style={{ fontSize: "0.7em", marginLeft: "2px", opacity: 0.8 }}>{item.unit || "Mb"}</span>
               </div>
             </div>
           ))}
@@ -192,14 +217,18 @@ export default function Home() {
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: isMobile ? "5px" : "15px",
+          gap: isMobile ? "4px" : "10px",
         }}>
           {[
             { icon: Server, label: "Rede", value: isp },
             { icon: MapPin, label: "Local", value: location },
             { icon: Activity, label: "Jitter", value: `${jitter}ms` }
           ].map((info, i) => (
-            <div key={i} style={{ background: COLORS.secondary, padding: "8px 4px", borderRadius: "10px" }}>
+            <div key={i} style={{ 
+              background: COLORS.secondary, 
+              padding: "8px 2px", 
+              borderRadius: "8px"
+            }}>
               <div style={{ fontSize: isMobile ? "7px" : "10px", opacity: 0.5, textTransform: "uppercase" }}>{info.label}</div>
               <div style={{ fontWeight: 600, fontSize: isMobile ? "9px" : "12px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {info.value || "---"}
@@ -208,27 +237,27 @@ export default function Home() {
           ))}
         </div>
 
-        {/* PROGRESS BAR (Apenas visível se carregando) */}
+        {/* PROGRESS BAR */}
         <div style={{ height: "20px" }}>
           <AnimatePresence>
             {loading && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <div style={{ height: "4px", background: "#ffffff11", borderRadius: "10px", overflow: "hidden" }}>
+                <div style={{ height: "3px", background: "#ffffff11", borderRadius: "10px", overflow: "hidden", maxWidth: "250px", margin: "0 auto" }}>
                   <motion.div animate={{ width: `${progress}%` }} style={{ height: "100%", background: COLORS.primary }} />
                 </div>
-                <p style={{ fontSize: "10px", marginTop: "5px" }}>{currentTest}...</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
         {/* FOOTER */}
-        <footer style={{ display: "flex", justifyContent: "center", gap: "15px", opacity: 0.4, fontSize: isMobile ? "8px" : "11px" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: "3px" }}><Shield size={10} /> SEGURO</span>
-          <span style={{ display: "flex", alignItems: "center", gap: "3px" }}><Globe size={10} /> 5G OK</span>
+        <footer style={{ display: "flex", justifyContent: "center", gap: "15px", opacity: 0.3, fontSize: isMobile ? "8px" : "11px" }}>
+          <span><Shield size={9} /> SEGURO</span>
+          <span><Globe size={9} /> 5G OK</span>
+          <span><Wifi size={9} /> CLOUDFLARE</span>
         </footer>
 
-        {/* BOTÃO ADAPTADO (Círculo no mobile / Barra no desktop) */}
+        {/* BOTÃO FLUTUANTE NO CELULAR / BARRA NO DESKTOP */}
         <div style={isMobile ? {
           position: "fixed",
           bottom: "30px",
@@ -246,9 +275,9 @@ export default function Home() {
             whileTap={{ scale: 0.9 }}
             style={{
               width: isMobile ? "65px" : "100%",
-              height: isMobile ? "65px" : "60px",
+              height: isMobile ? "65px" : "55px",
               maxWidth: isMobile ? "65px" : "400px",
-              borderRadius: isMobile ? "50%" : "15px",
+              borderRadius: isMobile ? "50%" : "12px",
               border: "none",
               background: COLORS.primary,
               color: COLORS.dark,
@@ -258,10 +287,10 @@ export default function Home() {
               alignItems: "center",
               justifyContent: "center",
               gap: "10px",
-              boxShadow: `0 10px 25px -5px ${COLORS.primary}77`,
+              boxShadow: `0 10px 25px -5px ${COLORS.primary}88`,
             }}
           >
-            {loading ? <Activity className="animate-spin" /> : <Zap size={isMobile ? 28 : 20} fill={COLORS.dark} />}
+            {loading ? <Activity className="animate-spin" size={24} /> : <Zap size={isMobile ? 28 : 22} fill={COLORS.dark} />}
             {!isMobile && (loading ? "PROCESSANDO..." : "INICIAR DIAGNÓSTICO")}
           </motion.button>
         </div>
