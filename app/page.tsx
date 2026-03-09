@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+// Importamos o componente com uma verificação de tipo mais flexível para o build
 import GaugeComponent from "react-gauge-component";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -191,9 +192,9 @@ export default function Home() {
                 value={item.val}
                 maxValue={item.max}
                 type="semicircle"
+                // Simplificação radical para evitar erros de tipo no build
                 labels={{
-                  valueLabel: { style: { display: "none" } } as any,
-                  markLabel: { hideMinMax: true } as any
+                   valueLabel: { hide: true } as any
                 }}
                 arc={{
                   width: 0.12,
