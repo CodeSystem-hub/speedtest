@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// Importamos o componente com uma verificação de tipo mais flexível para o build
 import GaugeComponent from "react-gauge-component";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -192,10 +191,11 @@ export default function Home() {
                 value={item.val}
                 maxValue={item.max}
                 type="semicircle"
-                // Simplificação radical para evitar erros de tipo no build
+                // Usando 'as any' para ignorar restrições de tipo do compilador no build
                 labels={{
-                   valueLabel: { hide: true } as any
-                }}
+                   valueLabel: { hide: true } as any,
+                   markLabel: { hideMinMax: true } as any
+                } as any}
                 arc={{
                   width: 0.12,
                   padding: 0.02,
@@ -205,14 +205,14 @@ export default function Home() {
                     { color: COLORS.primary }
                   ],
                   nbTick: 8
-                }}
+                } as any}
                 pointer={{
                   type: "needle",
                   color: COLORS.white,
                   length: 0.75,
                   width: isMobile ? 2 : 4,
                   elastic: true
-                }}
+                } as any}
               />
               
               <div style={{ fontSize: isMobile ? "12px" : "22px", fontWeight: 800, color: item.color, marginTop: "2px" }}>
@@ -246,7 +246,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* PROGRESS BAR */}
+        {/* PROGRESS BAR AREA */}
         <div style={{ height: "20px" }}>
           <AnimatePresence>
             {loading && (
@@ -266,7 +266,7 @@ export default function Home() {
           <span><Wifi size={9} /> CLOUDFLARE</span>
         </footer>
 
-        {/* BOTÃO FLUTUANTE NO CELULAR */}
+        {/* BOTÃO FLUTUANTE (MOBILE) / FIXO (DESKTOP) */}
         <div style={isMobile ? {
           position: "fixed",
           bottom: "30px",
