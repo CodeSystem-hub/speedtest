@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import GaugeComponent from "react-gauge-component";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Wifi,
   Download,
   Upload,
   Clock,
@@ -13,7 +12,8 @@ import {
   Activity,
   Zap,
   Shield,
-  Globe
+  Globe,
+  Wifi // Adicionado de volta para corrigir o ReferenceError
 } from "lucide-react";
 
 const COLORS = {
@@ -50,7 +50,9 @@ export default function Home() {
       const data = await res.json();
       setIsp(data.org || "Desconhecido");
       setLocation(`${data.city || "N/A"}`);
-    } catch (e) { setIsp("Erro de Rede"); }
+    } catch (e) { 
+      setIsp("Erro de Rede"); 
+    }
   }
 
   async function testPing() {
@@ -61,7 +63,9 @@ export default function Home() {
       try {
         await fetch("https://speed.cloudflare.com/cdn-cgi/trace", { cache: "no-store" });
         times.push(performance.now() - start);
-      } catch (e) { times.push(100); }
+      } catch (e) { 
+        times.push(100); 
+      }
       setProgress((i + 1) * 20);
     }
     setPing(Math.round(Math.min(...times)));
@@ -86,7 +90,9 @@ export default function Home() {
       }
       const duration = (performance.now() - start) / 1000;
       setDownload(parseFloat(((received * 8) / duration / 1000000).toFixed(2)));
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+    }
   }
 
   async function testUpload() {
@@ -98,7 +104,9 @@ export default function Home() {
       await fetch("https://speed.cloudflare.com/__up", { method: "POST", body: data, mode: "cors" });
       const duration = (performance.now() - start) / 1000;
       setUpload(parseFloat(((size * 8) / duration / 1000000).toFixed(2)));
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+    }
   }
 
   async function startTest() {
@@ -121,7 +129,7 @@ export default function Home() {
         width: "100%",
         background: `radial-gradient(circle at center, ${COLORS.secondary} 0%, ${COLORS.dark} 100%)`,
         color: COLORS.white,
-        fontFamily: "Poppins, sans-serif",
+        fontFamily: "sans-serif",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -180,31 +188,35 @@ export default function Home() {
               </div>
               
               <GaugeComponent
-                value={item.val}
-                maxValue={item.max}
-                type="semicircle"
-                labels={{
-                  visible: false, // Esconde os labels de escala
-                  valueLabel: { hide: true } // REMOVE O NÚMERO JUNTO AO PONTEIRO
-                }}
-                arc={{
-                  width: 0.12,
-                  padding: 0.02,
-                  subArcs: [
-                    { limit: item.max * 0.2, color: COLORS.dark },
-                    { limit: item.max * 0.6, color: COLORS.accent },
-                    { color: COLORS.primary }
-                  ],
-                  nbTick: 8
-                }}
-                pointer={{
-                  type: "needle",
-                  color: COLORS.white,
-                  length: 0.75,
-                  width: isMobile ? 2 : 4,
-                  elastic: true
-                }}
-              />
+  value={item.val}
+  maxValue={item.max}
+  type="semicircle"
+  labels={{
+    valueLabel: { style: { display: "none" } }, // Esconde o número no ponteiro
+    markLabel: {
+      hideMinMax: true, // Esconde os números de escala (0 e Max)
+      type: "outer"     // Define o posicionamento para evitar conflito
+    }
+  }}
+  arc={{
+    width: 0.12,
+    padding: 0.02,
+    subArcs: [
+      { limit: item.max * 0.2, color: COLORS.dark },
+      { limit: item.max * 0.6, color: COLORS.accent },
+      { color: COLORS.primary }
+    ],
+    nbTick: 8
+  }}
+  pointer={{
+    type: "needle",
+    color: COLORS.white,
+    length: 0.75,
+    width: 2,
+    elastic: true
+  }}
+/>
+              
               
               <div style={{ fontSize: isMobile ? "12px" : "22px", fontWeight: 800, color: item.color, marginTop: "2px" }}>
                 {item.val}<span style={{ fontSize: "0.7em", marginLeft: "2px", opacity: 0.8 }}>{item.unit || "Mb"}</span>
@@ -257,7 +269,7 @@ export default function Home() {
           <span><Wifi size={9} /> CLOUDFLARE</span>
         </footer>
 
-        {/* BOTÃO FLUTUANTE NO CELULAR / BARRA NO DESKTOP */}
+        {/* BOTÃO FLUTUANTE NO CELULAR */}
         <div style={isMobile ? {
           position: "fixed",
           bottom: "30px",
