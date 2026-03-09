@@ -229,13 +229,13 @@ export default function Home() {
         {/* GAUGES */}
 
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-            gap: "25px",
-            width: "100%"
-          }}
-        >
+  style={{
+    display: "grid",
+    gridTemplateColumns: isMobile ? "repeat(3,1fr)" : "repeat(auto-fit,minmax(180px,1fr))",
+    gap: isMobile ? "10px" : "25px",
+    width: "100%"
+  }}
+>
 
           {[
             { label: "Download", val: download, icon: Download, color: COLORS.primary },
@@ -249,7 +249,7 @@ export default function Home() {
               style={{
                 background: "rgba(255,255,255,0.04)",
                 borderRadius: "20px",
-                padding: "20px",
+                padding: isMobile ? "12px" : "20px",
                 textAlign: "center"
               }}
             >
@@ -269,7 +269,11 @@ export default function Home() {
               </div>
 
               <GaugeComponent
-                style={{ width: "200px", margin: "0 auto" }}
+  style={{
+  width: "100%",
+  maxWidth: "200px",
+  margin: "0 auto"
+}}
                 value={item.val}
                 maxValue={idx === 2 ? 200 : 500}
                 type="semicircle"
@@ -304,13 +308,13 @@ export default function Home() {
         {/* INFO */}
 
         <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "15px",
-            justifyContent: "center"
-          }}
-        >
+  style={{
+    display: "grid",
+    gridTemplateColumns: isMobile ? "repeat(3,1fr)" : "repeat(auto-fit,minmax(180px,1fr))",
+    gap: isMobile ? "10px" : "15px",
+    width: "100%"
+  }}
+>
 
           {[
             { icon: Server, label: "Provedor", value: isp },
@@ -322,9 +326,9 @@ export default function Home() {
               key={i}
               style={{
                 background: COLORS.secondary,
-                padding: "14px 20px",
+                padding: isMobile ? "10px" : "14px 20px",
                 borderRadius: "14px",
-                minWidth: "180px"
+                minWidth: isMobile ? "0":"180px"
               }}
             >
 
