@@ -13,7 +13,7 @@ import {
   Zap,
   Shield,
   Globe,
-  Wifi // Adicionado de volta para corrigir o ReferenceError
+  Wifi
 } from "lucide-react";
 
 const COLORS = {
@@ -188,35 +188,31 @@ export default function Home() {
               </div>
               
               <GaugeComponent
-  value={item.val}
-  maxValue={item.max}
-  type="semicircle"
-  labels={{
-    valueLabel: { style: { display: "none" } }, // Esconde o número no ponteiro
-    markLabel: {
-      hideMinMax: true, // Esconde os números de escala (0 e Max)
-      type: "outer"     // Define o posicionamento para evitar conflito
-    }
-  }}
-  arc={{
-    width: 0.12,
-    padding: 0.02,
-    subArcs: [
-      { limit: item.max * 0.2, color: COLORS.dark },
-      { limit: item.max * 0.6, color: COLORS.accent },
-      { color: COLORS.primary }
-    ],
-    nbTick: 8
-  }}
-  pointer={{
-    type: "needle",
-    color: COLORS.white,
-    length: 0.75,
-    width: 2,
-    elastic: true
-  }}
-/>
-              
+                value={item.val}
+                maxValue={item.max}
+                type="semicircle"
+                labels={{
+                  valueLabel: { style: { display: "none" } } as any,
+                  markLabel: { hideMinMax: true } as any
+                }}
+                arc={{
+                  width: 0.12,
+                  padding: 0.02,
+                  subArcs: [
+                    { limit: item.max * 0.2, color: COLORS.dark },
+                    { limit: item.max * 0.6, color: COLORS.accent },
+                    { color: COLORS.primary }
+                  ],
+                  nbTick: 8
+                }}
+                pointer={{
+                  type: "needle",
+                  color: COLORS.white,
+                  length: 0.75,
+                  width: isMobile ? 2 : 4,
+                  elastic: true
+                }}
+              />
               
               <div style={{ fontSize: isMobile ? "12px" : "22px", fontWeight: 800, color: item.color, marginTop: "2px" }}>
                 {item.val}<span style={{ fontSize: "0.7em", marginLeft: "2px", opacity: 0.8 }}>{item.unit || "Mb"}</span>
